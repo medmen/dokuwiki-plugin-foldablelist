@@ -25,8 +25,8 @@ all information is still available, but (hopefully) less important stuff gets hi
 ## configuration
 this plugin can be configured via dokuwikis admin config page
 So far there is only 1 item to configure:
-`collapse_after: 5` 
-the number of list items to be displayed before hiding the rest of the list
+
+`collapse_after: 5` the number of list items to be displayed before hiding the rest of the list
 
 ## great but i miss feature X 
 Feel free to improve, share and debug!
