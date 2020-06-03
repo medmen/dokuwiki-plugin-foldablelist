@@ -59,7 +59,20 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     public function handle($match, $state, $pos, Doku_Handler $handler){
-        return array($state, $match);
+        private $tag, $flags, $appendix;
+        $tag = false;
+        $flags = false;      
+                                                       
+        $appendix = substr($match, 13, -1); // strip <foldablelist  from start and > from end
+        if (strlen($appendix) > 2) { //check if parameters are given 
+            list($appendix, $flags) = explode('&', $appendix, 2);
+            $flags = explode('&', $flags);
+            list( , $tag) = explode('?', $appendix);
+        }
+        
+        return array($state, $match, trim($tag), $flags);
+        
+        // return array($state, $match);
     }
 
     /**
@@ -72,7 +85,9 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      */
     public function render($mode, Doku_Renderer $renderer, $data) {
         if($mode != 'xhtml') return false;
-        list($state, $match) = $data;
+        
+        list($state, $match, $tag, $flags) = $data;
+        
         switch ($state) {
             case DOKU_LEXER_ENTER :
                 $renderer->doc .= '<div class="foldablelist">';
@@ -88,6 +103,21 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
                 $renderer->doc.= 'STATE: '.$renderer->_xmlEntities($state);
         }
 
+        // pass config flags to internal config options
+        foreach($flags as $flag) {
+                $separator_pos = strpos($flag, '=');
+                if ($separator_pos === false) {
+                    continue; // no "=" found, skip to next flag
+                }
+
+                $conf_name = trim(strtolower(substr($flag, 0 , $separator_pos)));
+                $conf_val = trim(strtolower(substr($flag, $separator_pos+1)));
+
+                if(in_array($conf_name, array('collapse_after'))) {
+                    $my->conf[$conf_name] = $conf_val; // make sure we only allow predefined options 
+                }
+        }
+        
         // $renderer->doc .= var_export($data, true); // might be helpful when debugging
         return true;
     }
