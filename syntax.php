@@ -11,6 +11,12 @@
 if (!defined('DOKU_INC')) die();
 
 class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
+
+    protected $special_pattern = '<foldablelist(\b[^>\r\n]*?)>';
+    protected $entry_pattern   = '<foldablelist\b.*?>(?=.*?</foldablelist>)';
+    protected $exit_pattern    = '</foldablelist>';
+
+
     /**
      * @return string Syntax mode type
      */
@@ -41,11 +47,12 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      * @param string $mode Parser mode
      */
     public function connectTo($mode) {
-        $this->Lexer->addEntryPattern('<foldablelist>(?=.*?</foldablelist>)',$mode,'plugin_foldablelist');
+        $this->Lexer->addSpecialPattern($this->special_pattern, $mode, 'plugin_foldablelist');
+        $this->Lexer->addEntryPattern($this->entry_pattern, $mode, 'plugin_foldablelist');
     }
 
     public function postConnect() {
-        $this->Lexer->addExitPattern('</foldablelist>','plugin_foldablelist');
+        $this->Lexer->addExitPattern($this->exit_pattern, 'plugin_foldablelist');
     }
 
 
@@ -59,20 +66,21 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     public function handle($match, $state, $pos, Doku_Handler $handler){
-        private $tag, $flags, $appendix;
-        $tag = false;
-        $flags = false;      
-                                                       
-        $appendix = substr($match, 13, -1); // strip <foldablelist  from start and > from end
-        if (strlen($appendix) > 2) { //check if parameters are given 
-            list($appendix, $flags) = explode('&', $appendix, 2);
-            $flags = explode('&', $flags);
-            list( , $tag) = explode('?', $appendix);
+        switch ($state) {
+            case DOKU_LEXER_SPECIAL:
+                $parameters = explode(' ', (trim($match[1])));
+                foreach($parameters as $parameter) {
+                    list($key, $val) = explode('=', $parameter);
+                    $key = strtolower(trim(htmlspecialchars($key)));
+                    $val = strtolower(trim(htmlspecialchars($val)));
+                    if(in_array($key, $this->conf)) {
+                        $this->conf[$key] = $val; // overrride config
+                    }
+                }
+                break;
+            default:
+                return array($state, $match);
         }
-        
-        return array($state, $match, trim($tag), $flags);
-        
-        // return array($state, $match);
     }
 
     /**
@@ -85,9 +93,10 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      */
     public function render($mode, Doku_Renderer $renderer, $data) {
         if($mode != 'xhtml') return false;
-        
-        list($state, $match, $tag, $flags) = $data;
-        
+        if (empty($data)) return false;
+
+        list($state, $match) = $data;
+
         switch ($state) {
             case DOKU_LEXER_ENTER :
                 $renderer->doc .= '<div class="foldablelist">';
@@ -103,22 +112,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
                 $renderer->doc.= 'STATE: '.$renderer->_xmlEntities($state);
         }
 
-        // pass config flags to internal config options
-        foreach($flags as $flag) {
-                $separator_pos = strpos($flag, '=');
-                if ($separator_pos === false) {
-                    continue; // no "=" found, skip to next flag
-                }
-
-                $conf_name = trim(strtolower(substr($flag, 0 , $separator_pos)));
-                $conf_val = trim(strtolower(substr($flag, $separator_pos+1)));
-
-                if(in_array($conf_name, array('collapse_after'))) {
-                    $my->conf[$conf_name] = $conf_val; // make sure we only allow predefined options 
-                }
-        }
-        
-        // $renderer->doc .= var_export($data, true); // might be helpful when debugging
+        $renderer->doc .= var_export($data, true); // might be helpful when debugging
         return true;
     }
 }
