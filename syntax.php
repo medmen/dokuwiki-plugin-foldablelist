@@ -1,27 +1,26 @@
 <?php
 /**
- * DokuWiki Plugin scrollticker (Syntax Component)
+ * DokuWiki Plugin foldablelist (Syntax Component)
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  medmen <med-men@gmx.net>
- * @author Michael Bohn <mjbohn@gmail.com>
  */
 
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
 class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
-
-    protected $special_pattern = '<foldablelist(\b[^>\r\n]*?)>';
-    protected $entry_pattern   = '<foldablelist\b.*?>(?=.*?</foldablelist>)';
+    /**
+     * protected $entry_pattern = ' <note.*?>(?=.*?</note>)';
+     */
+    protected $entry_pattern   = '<foldablelist.*?>(?=.*?</foldablelist>)';
     protected $exit_pattern    = '</foldablelist>';
-
 
     /**
      * @return string Syntax mode type
      */
     public function getType() {
-        return 'protected';
+        return 'container';
     }
 
     function getAllowedTypes() {
@@ -34,6 +33,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
     public function getPType() {
         return 'block';
     }
+
     /**
      * @return int Sort order - Low numbers go before high numbers
      */
@@ -47,7 +47,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      * @param string $mode Parser mode
      */
     public function connectTo($mode) {
-        $this->Lexer->addSpecialPattern($this->special_pattern, $mode, 'plugin_foldablelist');
+        // $this->Lexer->addSpecialPattern($this->special_pattern, $mode, 'plugin_foldablelist');
         $this->Lexer->addEntryPattern($this->entry_pattern, $mode, 'plugin_foldablelist');
     }
 
@@ -66,18 +66,31 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     public function handle($match, $state, $pos, Doku_Handler $handler){
+        global $conf;
+        $plugin = $this->getPluginName();
+
         switch ($state) {
-            case DOKU_LEXER_SPECIAL:
-                $parameters = explode(' ', (trim($match[1])));
-                foreach($parameters as $parameter) {
-                    list($key, $val) = explode('=', $parameter);
-                    $key = strtolower(trim(htmlspecialchars($key)));
-                    $val = strtolower(trim(htmlspecialchars($val)));
-                    if(in_array($key, $this->conf)) {
-                        $this->conf[$key] = $val; // overrride config
+            case DOKU_LEXER_ENTER:
+                return array($state, $match);
+
+                // $match = "<foldablelist collapse_after=2>"
+                $parameters = trim(substr($match, 13, -1)); // get string between "<foldablelist" and ">"
+                dbg(var_export($parameters));
+                if($parameters and strpos($parameters, '=')) { // see if we have a string and it contains at least one '='
+                    $parameters = preg_split('/\s+/', $parameters, -1, PREG_SPLIT_NO_EMPTY); // turn into array separated by whit spaces
+                    foreach($parameters as $parameter) {
+                        list($key, $val) = explode('=', $parameter);
+                        $key = strtolower(trim(htmlspecialchars($key)));
+                        $val = strtolower(trim(htmlspecialchars($val)));
+
+                        // only override predefined settings!
+                        if (isset($conf['plugin'][$plugin][$key])) {
+                            $conf['plugin'][$plugin][$key] = $val;
+                        }
                     }
                 }
                 break;
+
             default:
                 return array($state, $match);
         }
@@ -92,6 +105,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
      * @return bool If rendering was successful.
      */
     public function render($mode, Doku_Renderer $renderer, $data) {
+        global $conf;
         if($mode != 'xhtml') return false;
         if (empty($data)) return false;
 
@@ -112,7 +126,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
                 $renderer->doc.= 'STATE: '.$renderer->_xmlEntities($state);
         }
 
-        $renderer->doc .= var_export($data, true); // might be helpful when debugging
+        // $renderer->doc .= var_export($data, true); // might be helpful when debugging
         return true;
     }
 }
