@@ -71,28 +71,35 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
 
         switch ($state) {
             case DOKU_LEXER_ENTER:
-                return array($state, $match);
-
-                // $match = "<foldablelist collapse_after=2>"
+                /**
+                 * $match = "<foldablelist collapse_after=2>"
+                 */
                 $parameters = trim(substr($match, 13, -1)); // get string between "<foldablelist" and ">"
                 dbg(var_export($parameters));
+                if(strlen(trim($parameters))< 3) {
+                    return array($state, $match, false); // no parameters given, dont bother with extra work
+                }
+/**
+                $params_arr = array();
                 if($parameters and strpos($parameters, '=')) { // see if we have a string and it contains at least one '='
                     $parameters = preg_split('/\s+/', $parameters, -1, PREG_SPLIT_NO_EMPTY); // turn into array separated by whit spaces
                     foreach($parameters as $parameter) {
                         list($key, $val) = explode('=', $parameter);
-                        $key = strtolower(trim(htmlspecialchars($key)));
-                        $val = strtolower(trim(htmlspecialchars($val)));
-
-                        // only override predefined settings!
+                        // override predefined settings!
                         if (isset($conf['plugin'][$plugin][$key])) {
-                            $conf['plugin'][$plugin][$key] = $val;
+                        $conf['plugin'][$plugin][$key] = $val;
                         }
+                        $key = 'data-'.strtolower(trim(htmlspecialchars($key))); // http://html5doctor.com/html5-custom-data-attributes/
+                        $val = strtolower(trim(htmlspecialchars($val)));
+                        $params_arr[$key] = $val;
                     }
                 }
+**/
+                return array($state, $match, $parameters);
                 break;
 
             default:
-                return array($state, $match);
+                return array($state, $match, false);
         }
     }
 
@@ -109,11 +116,11 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
         if($mode != 'xhtml') return false;
         if (empty($data)) return false;
 
-        list($state, $match) = $data;
+        list($state, $match, $parameters) = $data;
 
         switch ($state) {
             case DOKU_LEXER_ENTER :
-                $renderer->doc .= '<div class="foldablelist">';
+                $renderer->doc .= '<div class="foldablelist" '.$parameters.'>';
                 break;
             case DOKU_LEXER_UNMATCHED :
                 $renderer->doc .= $renderer->_xmlEntities($match);
@@ -124,6 +131,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
             default:
                 $renderer->doc.= 'MATCH: '.$renderer->_xmlEntities($match);
                 $renderer->doc.= 'STATE: '.$renderer->_xmlEntities($state);
+                $renderer->doc.= 'PARAMS: '.$renderer->_xmlEntities($parameters);
         }
 
         // $renderer->doc .= var_export($data, true); // might be helpful when debugging
