@@ -7,15 +7,6 @@
 
 jQuery.fn.foldlist = function(settings) {
 
-    collapse = this.closest('foldablelist').attr('collapse_after'); // get closest parent of type foldablelist and read its config setting
-    console.log( $(this) );
-    if ( typeof collapse !== "undefined" && collapse) {
-        // variable is set and isnt falsish so it can be used;
-        settings = jQuery.extend({
-            collapse_after: collapse
-        }, settings);
-    }
-
     return this.each(function(){
         var $bt = jQuery('<input type="button" style="padding: 0.2em; text-align: center; font-weight: bolder" class="toggle_foldablelist" value="&vArr;"/>');
         var $list = jQuery(this);
@@ -38,11 +29,12 @@ jQuery(function(){
      * - add a number to each foldablelist to overwrite general "collapse-after" settings
      * - make toggle button styleable
      */
+    let setting = {collapse_after: JSINFO['plugin_foldablelist']['collapse_after']};
+    let new_setting = jQuery("div.foldablelist").attr('data-collapse_after');
 
-    /**
-    * read general settings from config
-    */
-    let settings = {collapse_after: JSINFO['plugin_foldablelist']['collapse_after']};
+    if (new_setting != undefined) {
+        setting = {collapse_after: new_setting};
+    }
 
-    jQuery("div.foldablelist ul").foldlist(settings);
+    jQuery("div.foldablelist ul").foldlist(setting);
 });
