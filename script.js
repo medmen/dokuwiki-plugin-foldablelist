@@ -6,10 +6,6 @@
  */
 
 jQuery.fn.foldlist = function(settings) {
-    settings = jQuery.extend({
-        collapse_after: JSINFO['plugin_foldablelist']['collapse_after']
-    }, settings);
-
 
     return this.each(function(){
         var $bt = jQuery('<input type="button" style="padding: 0.2em; text-align: center; font-weight: bolder" class="toggle_foldablelist" value="&vArr;"/>');
@@ -33,5 +29,12 @@ jQuery(function(){
      * - add a number to each foldablelist to overwrite general "collapse-after" settings
      * - make toggle button styleable
      */
-    jQuery("div.foldablelist ul").foldlist({});
+    let setting = {collapse_after: JSINFO['plugin_foldablelist']['collapse_after']};
+    let new_setting = jQuery("div.foldablelist").attr('data-collapse_after');
+
+    if (new_setting != undefined) {
+        setting = {collapse_after: new_setting};
+    }
+
+    jQuery("div.foldablelist ul").foldlist(setting);
 });

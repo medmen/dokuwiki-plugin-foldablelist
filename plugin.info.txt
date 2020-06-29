@@ -1,7 +1,7 @@
 base   foldablelist
 author medmen
 email  med-men@gmx.net
-date   2019-03-17
+date   2020-06-29
 name   foldablelist plugin
 desc   collapse a list after a configurable number of items
 url    https://github.com/medmen/dokuwiki-plugin-foldablelist

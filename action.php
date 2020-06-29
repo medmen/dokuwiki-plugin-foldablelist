@@ -26,7 +26,8 @@ class action_plugin_foldablelist extends DokuWiki_Action_Plugin
      * @param $event
      * @param $params
      */
-    function addconfig2js ($event, $params) {
+    function addconfig2js($event, $params)
+    {
         global $JSINFO;
         global $conf;
         $this->loadConfig();

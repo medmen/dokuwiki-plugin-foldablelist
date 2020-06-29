@@ -4,11 +4,40 @@ plugin that makes an unordered list invisible after n items
 ## how to use?
 simply wrap an unordered list into the tags
 
-`<foldablelist>  
-  my list 
-</foldablelist>`
-
+```
+<foldablelist>  
+  * list item 1
+  * list item 2
+  * list item 3 
+</foldablelist>
+```
 this list can be generated via markup or dokuwiki plugins like the tag-plugin.
+
+#### Advanced use
+```
+<foldablelist>  
+{{topic>ns1:sub-ns?tag}}
+</foldablelist>
+```
+uses the tag plugin (topic component) to generate the list from all pages in the namespace ns1/sub-ns tagged with "tag" 
+
+## configuration
+this plugin can be configured via dokuwikis admin config page
+So far there is only 1 item to configure:
+
+`collapse_after: 5` the number of list items to be displayed before hiding the rest of the list, default value: 5
+
+#### new in 2020: 
+you can pass the config to every single instance: 
+
+```
+<foldablelist collapse_after=2>
+  * list item 1
+  * list item 2
+  * list item 3 
+</foldablelist>
+```
+this will show only the first 2 items
 
 ## why use?
 people like to put "important stuff" on startpage and the department i work in is not different.
@@ -20,13 +49,7 @@ or later my boss asked me to reduce the visible number of items on those lists t
 a certain minimum.    
 
 This plugin adresses the issue in a quick and cosmetic way: 
-all information is still available, but (hopefully) less important stuff gets hidden by default.
-      
-## configuration
-this plugin can be configured via dokuwikis admin config page
-So far there is only 1 item to configure:
-
-`collapse_after: 5` the number of list items to be displayed before hiding the rest of the list
+all information is still available, but (hopefully) less important stuff gets hidden by default.      
 
 ## great but i miss feature X 
 Feel free to improve, share and debug!
@@ -35,4 +58,3 @@ Feel free to improve, share and debug!
 * found a bug? please report at github
 * you are a programmer and want to improve the plugin? 
 Go ahead --> fork, rewrite, enhance and extend..   
-
