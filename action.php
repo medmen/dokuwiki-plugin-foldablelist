@@ -34,15 +34,3 @@ class action_plugin_foldablelist extends DokuWiki_Action_Plugin
         $JSINFO['plugin_foldablelist'] = $conf['plugin']['foldablelist'];
     }
 }
-
-/**
-    public function register(Doku_Event_Handler $controller)
-    {
-        $controller->register_hook('PLUGIN_POPULARITY_DATA_SETUP', 'AFTER', $this, 'usage_data');
-    }
-
-    public function usage_data(Doku_Event $event)
-    {
-        $event->data['plugin_foldablelist'] = 'is used';
-    }
- ** /
