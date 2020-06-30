@@ -6,6 +6,11 @@
  */
 
 jQuery.fn.foldlist = function(settings) {
+    // get the next parent div with class foldablelist, see if it holds a parameter to override global settings
+    let new_setting = jQuery(this).parents('div.foldablelist').attr('data-collapse_after');
+    if (new_setting != undefined) {
+        settings = {collapse_after: new_setting};
+    }
 
     return this.each(function(){
         var $bt = jQuery('<input type="button" style="padding: 0.2em; text-align: center; font-weight: bolder" class="toggle_foldablelist" value="&vArr;"/>');
@@ -19,22 +24,19 @@ jQuery.fn.foldlist = function(settings) {
             });
         }
     });
+
+    console.log('done');
 };
 
 
 jQuery(function(){
     /**
      * TODO:
-     * - implement a more general way using .children().length so this would work with ol or lots of ul as well
-     * - add a number to each foldablelist to overwrite general "collapse-after" settings
+     * - implement a more general way so this would work with ol as well
      * - make toggle button styleable
      */
-    let setting = {collapse_after: JSINFO['plugin_foldablelist']['collapse_after']};
-    let new_setting = jQuery("div.foldablelist").attr('data-collapse_after');
-
-    if (new_setting != undefined) {
-        setting = {collapse_after: new_setting};
-    }
-
-    jQuery("div.foldablelist ul").foldlist(setting);
+    let settings = {collapse_after: JSINFO['plugin_foldablelist']['collapse_after']};
+    jQuery('div.foldablelist ul').each(function(){
+        jQuery(this).foldlist(settings);
+    });
 });
