@@ -9,3 +9,5 @@
  */
 
 $meta['collapse_after']         = array('numeric');
+$meta['button_css']             = array('string');
+$meta['button_value']           = array('string');
