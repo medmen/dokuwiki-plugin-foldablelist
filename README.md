@@ -23,9 +23,15 @@ uses the tag plugin (topic component) to generate the list from all pages in the
 
 ## configuration
 this plugin can be configured via dokuwikis admin config page
-So far there is only 1 item to configure:
+So far there are 4 items to configure:
 
 `collapse_after: 5` the number of list items to be displayed before hiding the rest of the list, default value: 5
+
+`button_css: 'padding: 0.2em;'` css to style your button, feel free to colorize of move it around
+
+`button_up_value: ▲` the value shown in the button when clicking will collapse the list
+
+`button_down_value: ▼` the value shown in the button when clicking will unfold the list
 
 #### new in 2020: 
 you can pass the config to every single instance: 
@@ -38,6 +44,13 @@ you can pass the config to every single instance:
 </foldablelist>
 ```
 this will show only the first 2 items
+
+#### new in 2022:
+
+added config-options for CSS and separate Button-Up and Button-Down
+
+foldablelist will now work with ordered lists (ol) too ;-)
+
 
 ## why use?
 people like to put "important stuff" on startpage and the department i work in is not different.
