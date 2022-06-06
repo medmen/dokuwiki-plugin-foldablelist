@@ -9,3 +9,6 @@
  */
 
 $lang['collapse_after']  = 'Number of items to display';
+$lang['button_css']  = 'CSS to style und position the button';
+$lang['button_up_value'] = 'Value for button up';
+$lang['button_down_value'] = 'Value for button down';

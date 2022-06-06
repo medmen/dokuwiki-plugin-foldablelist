@@ -1,4 +1,9 @@
 /*
+ * DokuWiki Plugin foldablelist (Syntax Component)
+ *
+ * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
+ * @author  medmen <med-men@gmx.net>
+ *
  * Based on a jquery script discussed at stackoverflow.com:
  * https://stackoverflow.com/questions/4054211/jquery-hide-show-list-items-after-nth-item
  * Requires: jQuery
