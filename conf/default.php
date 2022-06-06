@@ -10,4 +10,5 @@
 
 $conf['collapse_after']        = 5;
 $conf['button_css']            = 'padding: 0.2em; text-align: center; font-weight: bolder';
-$conf['button_value']          = '↕';
+$conf['button_up_value']          = '▲';
+$conf['button_down_value']          = '▼';
