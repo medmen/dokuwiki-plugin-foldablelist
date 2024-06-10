@@ -51,6 +51,26 @@ added config-options for CSS and separate Button-Up and Button-Down
 
 foldablelist will now work with ordered lists (ol) too ;-)
 
+#### new in 2024:
+
+```
+<foldablelist collapse_level=2>
+  * item 1
+  * item 2
+  * item 3
+    * item 3.1
+    * item 3.2
+      * item 3.2.1
+      * item 3.2.2
+      * item 3.2.3
+    * item 3.3
+    * item 3.4
+  * item 4
+</foldablelist>
+```
+
+this will show only the first levels and will hide items like 3.2.1
+
 
 ## why use?
 people like to put "important stuff" on startpage and the department i work in is not different.

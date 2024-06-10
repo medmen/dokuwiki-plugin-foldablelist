@@ -72,27 +72,31 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
         switch ($state) {
             case DOKU_LEXER_ENTER:
                 /**
-                 * $match = "<foldablelist collapse_after=2>"
+                 * $match = "<foldablelist collapse_after=5 collapse_level=2>"
                  */
                 $parameters = trim(substr($match, 13, -1)); // get string between "<foldablelist" and ">"
                 if(strlen(trim($parameters))< 3) {
                     return array($state, $match, false); // no parameters given, dont bother with extra work
                 }
 
+                // split string by predifined separators
+                $namevaluepairs = preg_split("/[,&]+/", $parameters);
+
                 $params_arr = array();
-                if($parameters and strpos($parameters, '=')) { // see if we have a string and it contains at least one '='
-                    $parameters = preg_split('/\s+/', $parameters, -1, PREG_SPLIT_NO_EMPTY); // turn into array separated by whit spaces
-                    foreach($parameters as $parameter) {
-                        list($key, $val) = explode('=', $parameter);
-                        /**
-                        // override predefined settings!
-                        if (isset($conf['plugin'][$plugin][$key])) {
-                            $conf['plugin'][$plugin][$key] = $val;
+
+                if(count($namevaluepairs) < 1 ) {
+                    return array($state, $match, $params_arr);
+                }
+
+                foreach ($namevaluepairs as $parameters) {
+                    if($parameters and strpos($parameters, '=')) { // see if we have a string and it contains at least one '='
+                        $parameters = preg_split('/\s+/', $parameters, -1, PREG_SPLIT_NO_EMPTY); // turn into array separated by whit spaces
+                        foreach($parameters as $parameter) {
+                            list($key, $val) = explode('=', $parameter);
+                            $key = 'data-'.strtolower(trim(htmlspecialchars($key))); // http://html5doctor.com/html5-custom-data-attributes/
+                            $val = strtolower(trim(htmlspecialchars($val)));
+                            $params_arr[$key] = $val;
                         }
-                         **/
-                        $key = 'data-'.strtolower(trim(htmlspecialchars($key))); // http://html5doctor.com/html5-custom-data-attributes/
-                        $val = strtolower(trim(htmlspecialchars($val)));
-                        $params_arr[$key] = $val;
                     }
                 }
 

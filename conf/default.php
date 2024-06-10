@@ -8,7 +8,8 @@
  *
  */
 
-$conf['collapse_after']        = 5;
-$conf['button_css']            = 'padding: 0.2em; text-align: center; font-weight: bolder';
-$conf['button_up_value']          = '▲';
-$conf['button_down_value']          = '▼';
+$conf['collpase_level']    = 2;
+$conf['collapse_after']    = 5;
+$conf['button_css']        = 'margin: 0.3em; padding: 0.5em; text-align: center; font-weight: bolder';
+$conf['button_up_value']   = '▲';
+$conf['button_down_value'] = '▼';
