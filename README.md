@@ -1,8 +1,8 @@
 # dokuwiki-plugin-foldablelist
-plugin that makes an unordered list invisible after n items
+plugin that makes an unordered or ordered list invisible after n items
 
 ## how to use?
-simply wrap an unordered list into the tags
+simply wrap the list into the tags
 
 ```
 <foldablelist>  
@@ -22,10 +22,12 @@ this list can be generated via markup or dokuwiki plugins like the tag-plugin.
 uses the tag plugin (topic component) to generate the list from all pages in the namespace ns1/sub-ns tagged with "tag" 
 
 ## configuration
-this plugin can be configured via dokuwikis admin config page
-So far there are 4 items to configure:
+this plugin can be configured via dokuwikis admin config page.
+These are the items to configure:
 
-`collapse_after: 5` the number of list items to be displayed before hiding the rest of the list, default value: 5
+`collapse_after: 5` the number of list items to be displayed before hiding the rest of the list, default value: 5, set to 0 to disable
+
+`collapse_level: 3` the number of list items to be displayed before hiding the rest of the list, default value: 3, set to 0 to disable
 
 `button_css: 'padding: 0.2em;'` css to style your button, feel free to colorize of move it around
 
@@ -60,16 +62,49 @@ foldablelist will now work with ordered lists (ol) too ;-)
   * item 3
     * item 3.1
     * item 3.2
-      * item 3.2.1
-      * item 3.2.2
-      * item 3.2.3
+      - item 3.2.1
+      - item 3.2.2
+        * item 3.2.2.1
+        * item 3.2.2.2
+        * item 3.2.2.3
+      - item 3.2.3
     * item 3.3
     * item 3.4
   * item 4
+  * item 5
 </foldablelist>
 ```
 
 this will show only the first levels and will hide items like 3.2.1
+
+You can mix and match both settings too:
+
+```
+<foldablelist collapse_level=2&collapse_after=4>
+  * item 1
+  * item 2
+  * item 3
+    * item 3.1
+    * item 3.2
+      - item 3.2.1
+      - item 3.2.2
+        * item 3.2.2.1
+        * item 3.2.2.2
+        * item 3.2.2.3
+      - item 3.2.3
+    * item 3.3
+    * item 3.4
+    * item 3.5 
+  * item 4
+  * item 5
+  * item 6
+</foldablelist>
+```
+
+this will hide levels deeper than 2 AND will hide items more than 4 at each level
+
+beware the syntax when using both settings inline:
+settings MUST be joined by ampersand '&', no blank spaces allowed !!
 
 
 ## why use?

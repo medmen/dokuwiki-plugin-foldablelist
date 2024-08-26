@@ -72,7 +72,7 @@ class syntax_plugin_foldablelist extends DokuWiki_Syntax_Plugin {
         switch ($state) {
             case DOKU_LEXER_ENTER:
                 /**
-                 * $match = "<foldablelist collapse_after=5 collapse_level=2>"
+                 * $match = "<foldablelist collapse_after=5&collapse_level=2>"
                  */
                 $parameters = trim(substr($match, 13, -1)); // get string between "<foldablelist" and ">"
                 if(strlen(trim($parameters))< 3) {
