@@ -12,25 +12,19 @@
 
 jQuery.fn.fold = function(settings) {
 
-    console.group('fold');
-    console.time();
-
     function isPositiveInt(str) {
         let isPosInt= false;
         if( Number.isInteger(Number(str)) && Number(str) > 0 && Number(str) < 10) {
             isPosInt = true;
         }
-        console.log('given Number ' + str + ' is positive.int ' + isPosInt);
         return isPosInt;
     }
 
     function addToggleButton(list, settings) {
-        console.group('ToggleButton');
         const bt = jQuery('<input type="button" class="toggle_foldablelist_level" />');
         bt.attr('style', settings.button_css);
         bt.val(settings.button_up_value);
         bt.on ("click", function() {
-            console.dir(list);
             list.find('.foldablelist_toggle').toggle();
 
             // using val() function sanitizes values, so we dont get XSS'ed
@@ -40,9 +34,7 @@ jQuery.fn.fold = function(settings) {
                 bt.val(settings.button_down_value)
             }
         });
-        console.log('prepending button');
         list.closest('div.foldablelist').prepend(bt);
-        console.groupEnd('ToggleButton');
     }
 
     /**
@@ -55,60 +47,30 @@ jQuery.fn.fold = function(settings) {
      * @param n integer telling at which depth to hide
      */
     function toggleNthLevel(list, n) {
-        console.group('toggleByLevel');
-        console.log('toggeling at Level:' + n);
         if(n == undefined) {
             return;
         }
-        // Select all list items
-
-        // console.dir({list});
-        console.log('LIST-Parent: ' + list.parents('div').eq(0).attr('class'));
-
         const listItems = list.find('ol li, ul li');
-        console.dir({listItems});
         nthLevelItems = listItems.filter(function() {
             level = jQuery(this).parents('ol, ul').length-1;
-            console.log('Level:' + level);
-            if (level == n) {
-                console.log('Level ist at targt' + n);
-            }
-
             return level == n;
         });
         // Toggle the visibility of the nth level items
-        console.dir({nthLevelItems});
-        // nthLevelItems.toggle();
         nthLevelItems.addClass('foldablelist_toggle');
-
-        console.groupEnd('toggleByLevel');
     }
 
     function toggleNthChild(list, n) {
-        console.group('toggleAfterChildren');
-        console.log('toggeling after ' + n + 'Chilren');
-
         if(n == undefined) {
             console.error('n is undef, cannot continue');
             return;
         }
-        console.log('While toggleNthChild, list is:');
-        console.dir({list});
-
-        const colors = Array('red', 'green', 'yellow', 'blue', 'purple', 'magenta', 'white');
 
         // find parent div
         list.closest('div.foldablelist').find("ul, ol").each(function() {
-            const colr = colors[Math.floor(Math.random() * colors.length)];
-            jQuery(this).css('border', '1 px solid' + colr);
-            jQuery(this).append( "<span>" + n + "</span>" );
             hideChildren = jQuery(this).children('li').slice(n);
-            hideChildren.css('background', colr);
             hideChildren.addClass('foldablelist_toggle');
         });
-
-        console.groupEnd('toggleAfterChildren');
-  }
+    }
 
     /**
      * ########## Main part ###############
@@ -116,21 +78,15 @@ jQuery.fn.fold = function(settings) {
 
     return this.each(function() {
         list = jQuery(this);
-        console.dir(list);
-
-        console.log('LIST-Parent: ' + list.parents('div').eq(0).attr('class'));
-        console.log('LIST-class: ' + list.attr('class'));
 
         /**
-         *  checks first: see if values given by plugin settings are positive integers
-         */
-        // see if default settings contain positive numbers, otherwise delete them from settings object
+        * see if default settings contain positive numbers, otherwise delete them from settings object
+        */
+
         if (isPositiveInt(settings.collapse_after) == false) {
-            console.log('settings.collapse_after is not positive, deleting ..');
             delete (settings.collapse_after);
         }
         if (isPositiveInt(settings.collapse_level) == false) {
-            console.log('settings.collapse_level is not positive, deleting ..');
             delete (settings.collapse_level);
         }
 
@@ -141,11 +97,9 @@ jQuery.fn.fold = function(settings) {
         const setCollapseNthChild = jQuery(this).closest('div.foldablelist').attr('data-collapse_after');
         if (setCollapseNthChild !== undefined) {
             if (isPositiveInt(setCollapseNthChild)) {
-                console.log('settings.collapse_after in div is  positive, updating value ..');
                 settings.collapse_after = setCollapseNthChild;
                 toggleNthChild(list, settings.collapse_after);
             } else {
-                console.log('settings.collapse_after in div is negative or zero, unsetting ..');
                 delete (settings.collapse_after);
             }
         }
@@ -153,16 +107,14 @@ jQuery.fn.fold = function(settings) {
         const setCollapseLevel = jQuery(this).closest('div.foldablelist').attr('data-collapse_level');
         if (setCollapseLevel !== undefined) {
             if (isPositiveInt(setCollapseLevel)) {
-                console.log('settings.collapse_level in div is  positive, updating value ..');
                 settings.collapse_level = setCollapseLevel;
                 toggleNthLevel(list, settings.collapse_level);
             } else {
-                console.log('settings.collapse_level in div is negative or zero, unsetting ..');
                 delete (settings.collapse_level);
             }
         }
 
-        console.log('actual collapse_level: ' + settings.collapse_level + ' and collapse_after: ' + settings.collapse_after);
+        // console.log('actual collapse_level: ' + settings.collapse_level + ' and collapse_after: ' + settings.collapse_after);
 
         /**
          * only add toggle button if at least 1 setting is positive int
@@ -171,15 +123,11 @@ jQuery.fn.fold = function(settings) {
             addToggleButton(list, settings);
         }
 
-        console.timeEnd();
-        console.groupEnd('fold');
     });
 };
 
 jQuery(function(){
     // read settings from config
     const settings = JSINFO['plugin_foldablelist'];
-    console.log('native settings: ' + JSON.stringify(settings,null, 4));
-
     jQuery('div.foldablelist').fold(settings);
 });
