@@ -7,7 +7,7 @@
  * @author medmen <med-men@gmx.net>
  *
  */
-
+$lang['collapse_level']  = 'hide list items at depth level';
 $lang['collapse_after']  = 'Number of items to display';
 $lang['button_css']  = 'CSS to style und position the button';
 $lang['button_up_value'] = 'Value for button up';

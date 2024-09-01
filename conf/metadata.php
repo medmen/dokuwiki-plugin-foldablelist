@@ -8,7 +8,8 @@
  *
  */
 
-$meta['collapse_after']         = array('numeric');
-$meta['button_css']             = array('string');
-$meta['button_up_value']        = array('string');
-$meta['button_down_value']      = array('string');
+$meta['collapse_level']    = array('numeric');
+$meta['collapse_after']    = array('numeric');
+$meta['button_css']        = array('string');
+$meta['button_up_value']   = array('string');
+$meta['button_down_value'] = array('string');

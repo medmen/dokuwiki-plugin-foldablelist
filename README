@@ -1,6 +1,6 @@
 foldablelist Plugin for DokuWiki
 
-collapse a list after a configurable number of items
+collapse a list after a configurable number of items and/or at a configurable depth
 
 Please refer to http://www.dokuwiki.org/plugins for additional info
 on how to install plugins in DokuWiki.
