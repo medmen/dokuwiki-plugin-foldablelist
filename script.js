@@ -51,9 +51,9 @@ jQuery.fn.fold = function(settings) {
             return;
         }
         const listItems = list.find('ol li, ul li');
-        nthLevelItems = listItems.filter(function() {
-            level = jQuery(this).parents('ol, ul').length-1;
-            return level == n;
+        const nthLevelItems = listItems.filter(function() {
+            const level = jQuery(this).parents('ol, ul').length-1;
+            return level === n;
         });
         // Toggle the visibility of the nth level items
         nthLevelItems.addClass('foldablelist_toggle');
@@ -66,8 +66,9 @@ jQuery.fn.fold = function(settings) {
         }
 
         // find parent div
-        list.closest('div.foldablelist').find("ul, ol").each(function() {
-            hideChildren = jQuery(this).children('li').slice(n);
+        const parentDiv = list.closest('div.foldablelist');
+        parentDiv.find("ul, ol").each(function() {
+            const hideChildren = jQuery(this).children('li').slice(n);
             hideChildren.addClass('foldablelist_toggle');
         });
     }
@@ -77,7 +78,8 @@ jQuery.fn.fold = function(settings) {
      */
 
     return this.each(function() {
-        list = jQuery(this);
+        const list = jQuery(this);
+        const parentDiv = list.closest('div.foldablelist');
 
         /**
         * see if default settings contain positive numbers, otherwise delete them from settings object
@@ -94,7 +96,7 @@ jQuery.fn.fold = function(settings) {
          * see if separate settings for collapsing are set via div
          */
 
-        const setCollapseNthChild = jQuery(this).closest('div.foldablelist').attr('data-collapse_after');
+        const setCollapseNthChild = parentDiv.attr('data-collapse_after');
         if (setCollapseNthChild !== undefined) {
             if (isPositiveInt(setCollapseNthChild)) {
                 settings.collapse_after = setCollapseNthChild;
@@ -104,7 +106,7 @@ jQuery.fn.fold = function(settings) {
             }
         }
 
-        const setCollapseLevel = jQuery(this).closest('div.foldablelist').attr('data-collapse_level');
+        const setCollapseLevel = parentDiv.attr('data-collapse_level');
         if (setCollapseLevel !== undefined) {
             if (isPositiveInt(setCollapseLevel)) {
                 settings.collapse_level = setCollapseLevel;
