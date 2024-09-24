@@ -11,13 +11,12 @@
  */
 
 jQuery.fn.fold = function(settings) {
-
-    function isPositiveInt(str) {
-        let isPosInt= false;
-        if( Number.isInteger(Number(str)) && Number(str) > 0 && Number(str) < 10) {
-            isPosInt = true;
-        }
-        return isPosInt;
+    function isPositiveInt(string) {
+        const number = Number(string);
+        const isInteger = Number.isInteger(number);
+        const isPositive = number > 0;
+        const isLessThan10 = number < 10;
+        return isInteger && isPositive && isLessThan10;
     }
 
     function addToggleButton(list, settings) {
@@ -80,51 +79,45 @@ jQuery.fn.fold = function(settings) {
     return this.each(function() {
         const list = jQuery(this);
         const parentDiv = list.closest('div.foldablelist');
-
+        let show_button = false;
         /**
-        * see if default settings contain positive numbers, otherwise delete them from settings object
-        */
-
-        if (isPositiveInt(settings.collapse_after) == false) {
-            delete (settings.collapse_after);
-        }
-        if (isPositiveInt(settings.collapse_level) == false) {
-            delete (settings.collapse_level);
-        }
-
-        /**
-         * see if separate settings for collapsing are set via div
+         * override defaults if set via div
+         * but ONLY if checks pass!
+         * @TODO; add further checks as you like (e.g. limit max )
          */
 
         const setCollapseNthChild = parentDiv.attr('data-collapse_after');
-        if (setCollapseNthChild !== undefined) {
-            if (isPositiveInt(setCollapseNthChild)) {
+        if (setCollapseNthChild !== undefined && isPositiveInt(setCollapseNthChild)) {
                 settings.collapse_after = setCollapseNthChild;
-                toggleNthChild(list, settings.collapse_after);
-            } else {
-                delete (settings.collapse_after);
-            }
         }
 
         const setCollapseLevel = parentDiv.attr('data-collapse_level');
-        if (setCollapseLevel !== undefined) {
-            if (isPositiveInt(setCollapseLevel)) {
+        if (setCollapseLevel !== undefined && isPositiveInt(setCollapseLevel)) {
                 settings.collapse_level = setCollapseLevel;
-                toggleNthLevel(list, settings.collapse_level);
-            } else {
-                delete (settings.collapse_level);
-            }
         }
 
         // console.log('actual collapse_level: ' + settings.collapse_level + ' and collapse_after: ' + settings.collapse_after);
 
         /**
-         * only add toggle button if at least 1 setting is positive int
+         * fold list only if final setting is positive int
          */
-        if (settings.collapse_level !== undefined || settings.collapse_after !== undefined) {
-            addToggleButton(list, settings);
+        if(isPositiveInt(settings.collapse_after)) {
+            show_button = true;
+            toggleNthChild(list, settings.collapse_after);
         }
 
+        if(isPositiveInt(settings.collapse_level)) {
+            show_button = true;
+            toggleNthLevel(list, settings.collapse_level);
+        }
+
+        /**
+         * only add toggle button if at least 1 setting is positive int
+         */
+        if (show_button === true) {
+            list.find('.foldablelist_toggle').toggle();
+            addToggleButton(list, settings);
+        }
     });
 };
 
